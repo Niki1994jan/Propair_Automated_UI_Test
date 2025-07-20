@@ -102,7 +102,7 @@ class WizzairTest
             searchButton.Click();
 
             // Eredményoldal betöltése (URL változás)
-            wait.Until(driver => driver.Url.Contains("booking/select-flight"));
+            wait.Until(driver => driver.Url.Contains("booking/select-flight")); //elkezdett Critical error-t dobni...
 
             // Találati lista UI elem ellenőrzése
             var flightElements = driver.FindElements(By.CssSelector("[data-test*='flight-select']"));
@@ -116,7 +116,7 @@ class WizzairTest
                 Console.WriteLine(flight);
             }
 
-            Console.WriteLine("✅ Keresési eredmények betöltve."); //elkezdett Critical error-t dobni...
+            Console.WriteLine("✅ Keresési eredmények betöltve.");
             
         }
         catch (Exception ex)
