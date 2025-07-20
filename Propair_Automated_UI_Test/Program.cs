@@ -3,6 +3,8 @@ using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
 using System.Threading;
+using System.Linq;
+using System.Collections.Generic;
 
 class WizzairTest
 {
@@ -118,7 +120,7 @@ class WizzairTest
             {
                 try
                 {
-                    var element = driver.FindElement(By.CssSelector("span[aria-label='2025. július 22., kedd']"));
+                    var element = driver.FindElement(By.CssSelector("span[aria-label='2025. július 24., csütörtök']"));
                     return (element != null && element.Displayed) ? element : null;
                 }
                 catch (NoSuchElementException)
@@ -126,6 +128,7 @@ class WizzairTest
                     return null;
                 }
             });
+            departureDate_Calendar.Click();
 
             //teszt - ellenőrzés?
 
@@ -136,7 +139,7 @@ class WizzairTest
             {
                 try
                 {
-                    var element = driver.FindElement(By.CssSelector("span[aria-label='2025. július 23., szerda']")); //itt elcrashel....
+                    var element = driver.FindElement(By.CssSelector("span[aria-label='2025. július 27., vasárnap']"));
                     return (element != null && element.Displayed) ? element : null;
                 }
                 catch (NoSuchElementException)
@@ -144,16 +147,45 @@ class WizzairTest
                     return null;
                 }
             });
+            departureDate_Calendar.Click();
 
-            //Utasok számának módosítása
+            ////Utasok számának módosítása
+            //var number_passanger = wait.Until(drv =>
+            //{
+            //    try
+            //    {
+            //        var el = drv.FindElement(By.CssSelector("input[data-test='flight-search-search-passenger']"));
+            //        return (el != null && el.Displayed && el.Enabled) ? el : null;
+            //    }
+            //    catch (NoSuchElementException)
+            //    {
+            //        return null;
+            //    }
+            //});
+            
+            ////hozzáadunk egy felnőttet
+            //var number_passanger_button = wait.Until(drv =>
+            //{
+            //    try
+            //    {
+            //        var el = drv.FindElement(By.CssSelector("button[data-test='stepper-button-increase']"));
+            //        return (el != null && el.Displayed && el.Enabled) ? el : null;
+            //    }
+            //    catch (NoSuchElementException)
+            //    {
+            //        return null;
+            //    }
+            //});
+            //number_passanger_button.Click();
 
+            ////hozzáadunk egy gyereket
 
             // Keresés indítása
             var searchButton = wait.Until(drv =>
             {
                 try
                 {
-                    var el = drv.FindElement(By.CssSelector("button[data-test='flight-search-go']"));
+                    var el = drv.FindElement(By.CssSelector("button[data-test='flight-search-submit']"));
                     return (el != null && el.Displayed && el.Enabled) ? el : null;
                 }
                 catch (NoSuchElementException)
@@ -164,23 +196,22 @@ class WizzairTest
             searchButton.Click();
 
             // Eredményoldal betöltése (URL változás)
-            wait.Until(drv => drv.Url.Contains("search"));
+            wait.Until(drv => drv.Url.Contains("booking/select-flight"));
 
             // Találati lista UI elem ellenőrzése
-            var resultList = wait.Until(drv =>
-            {
-                try
-                {
-                    var el = drv.FindElement(By.CssSelector("div[data-test='flight-search-result']"));
-                    return (el != null && el.Displayed) ? el : null;
-                }
-                catch (NoSuchElementException)
-                {
-                    return null;
-                }
-            });
+            var flightElements = driver.FindElements(By.CssSelector("[data-test*='flight-select']"));
 
-            Console.WriteLine("✅ Keresési eredmények betöltve.");
+            // Listába mentjük (ha szükséges, például string-ként az elemek szövegét):
+            var flightTexts = flightElements.Select(el => el.Text).ToList();
+
+            // Egymás alá, sortöréssel kiírjuk:
+            foreach (var flight in flightTexts)
+            {
+                Console.WriteLine(flight);
+            }
+
+            Console.WriteLine("✅ Keresési eredmények betöltve."); //elkezdett Critical error-t dobni...
+            
         }
         catch (Exception ex)
         {
@@ -188,7 +219,7 @@ class WizzairTest
         }
         finally
         {
-            Thread.Sleep(5000); // Csak hogy lásd, mi történt
+            Thread.Sleep(5000); // Csak hogy lássuk, mi történt
             driver.Quit();
         }
     }
