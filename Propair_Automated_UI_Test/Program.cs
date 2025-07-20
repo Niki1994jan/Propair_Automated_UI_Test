@@ -162,21 +162,21 @@ class WizzairTest
             //        return null;
             //    }
             //});
-            
-            ////hozzáadunk egy felnőttet
-            //var number_passanger_button = wait.Until(drv =>
-            //{
-            //    try
-            //    {
-            //        var el = drv.FindElement(By.CssSelector("button[data-test='stepper-button-increase']"));
-            //        return (el != null && el.Displayed && el.Enabled) ? el : null;
-            //    }
-            //    catch (NoSuchElementException)
-            //    {
-            //        return null;
-            //    }
-            //});
-            //number_passanger_button.Click();
+
+            //hozzáadunk egy felnőttet
+            var number_passanger_button = wait.Until(drv =>
+            {
+                try
+                {
+                    var el = drv.FindElement(By.CssSelector("button[data-test='stepper-button-increase']"));
+                    return (el != null && el.Displayed && el.Enabled) ? el : null;
+                }
+                catch (NoSuchElementException)
+                {
+                    return null;
+                }
+            });
+            number_passanger_button.Click();
 
             ////hozzáadunk egy gyereket
 
