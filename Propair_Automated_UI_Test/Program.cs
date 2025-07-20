@@ -56,11 +56,11 @@ class WizzairTest
             departureInput.SendKeys("Budapest");
 
             //teszt - Budapest megjelenik-e?
-            var departureResult = wait.Until(drv =>
+            var departureResult = wait.Until(driver =>
             {
                 try
                 {
-                    var el = drv.FindElement(By.XPath("//mark[contains(text(),'Budapest')]"));
+                    var el = driver.FindElement(By.XPath("//mark[contains(text(),'Budapest')]"));
                     return (el != null && el.Displayed && el.Enabled) ? el : null;
                 }
                 catch (NoSuchElementException)
@@ -71,11 +71,11 @@ class WizzairTest
             departureResult.Click();
 
             // Érkezési város (London)
-            var arrivalInput = wait.Until(drv =>
+            var arrivalInput = wait.Until(driver =>
             {
                 try
                 {
-                    var el = drv.FindElement(By.CssSelector("input[data-test='search-arrival-station']"));
+                    var el = driver.FindElement(By.CssSelector("input[data-test='search-arrival-station']"));
                     return (el != null && el.Displayed && el.Enabled) ? el : null;
                 }
                 catch (NoSuchElementException)
@@ -87,11 +87,11 @@ class WizzairTest
             arrivalInput.SendKeys("WAW"); //Varsó Chopin reptér
 
             //teszt = érk.város megjelenik-e?
-            var arrivalResult = wait.Until(drv =>
+            var arrivalResult = wait.Until(driver =>
             {
                 try
                 {
-                    var el = drv.FindElement(By.XPath("//mark[contains(text(),'WAW')]"));
+                    var el = driver.FindElement(By.XPath("//mark[contains(text(),'WAW')]"));
                     return (el != null && el.Displayed && el.Enabled) ? el : null;
                 }
                 catch (NoSuchElementException)
@@ -150,11 +150,11 @@ class WizzairTest
             departureDate_Calendar.Click();
 
             ////Utasok számának módosítása
-            //var number_passanger = wait.Until(drv =>
+            //var number_passanger = wait.Until(driver =>
             //{
             //    try
             //    {
-            //        var el = drv.FindElement(By.CssSelector("input[data-test='flight-search-search-passenger']"));
+            //        var el = driver.FindElement(By.CssSelector("input[data-test='flight-search-search-passenger']"));
             //        return (el != null && el.Displayed && el.Enabled) ? el : null;
             //    }
             //    catch (NoSuchElementException)
@@ -164,11 +164,11 @@ class WizzairTest
             //});
 
             //hozzáadunk egy felnőttet
-            var number_passanger_button = wait.Until(drv =>
+            var number_adult_button = wait.Until(driver =>
             {
                 try
                 {
-                    var el = drv.FindElement(By.CssSelector("button[data-test='stepper-button-increase']"));
+                    var el = driver.FindElement(By.XPath("//div[@data-test='adult-stepper']//button[@data-test='stepper-button-increase']"));
                     return (el != null && el.Displayed && el.Enabled) ? el : null;
                 }
                 catch (NoSuchElementException)
@@ -176,17 +176,30 @@ class WizzairTest
                     return null;
                 }
             });
-            number_passanger_button.Click();
+            number_adult_button.Click();
 
-            //hozzáadunk egy gyereket
-
-
-            // Keresés indítása
-            var searchButton = wait.Until(drv =>
+            //Hozzáadunk egy gyereket
+            var number_child_button = wait.Until(driver =>
             {
                 try
                 {
-                    var el = drv.FindElement(By.CssSelector("button[data-test='flight-search-submit']"));
+                    var el = driver.FindElement(By.XPath("//div[@data-test='stepper-ds']//button[@data-test='stepper-button-increase']")); //ez nem működik..
+                    return (el != null && el.Displayed && el.Enabled) ? el : null;
+                }
+                catch (NoSuchElementException)
+                {
+                    return null;
+                }
+            });
+            number_child_button.Click();
+
+
+            // Keresés indítása
+            var searchButton = wait.Until(driver =>
+            {
+                try
+                {
+                    var el = driver.FindElement(By.CssSelector("button[data-test='flight-search-submit']"));
                     return (el != null && el.Displayed && el.Enabled) ? el : null;
                 }
                 catch (NoSuchElementException)
@@ -197,7 +210,7 @@ class WizzairTest
             searchButton.Click();
 
             // Eredményoldal betöltése (URL változás)
-            wait.Until(drv => drv.Url.Contains("booking/select-flight"));
+            wait.Until(driver => driver.Url.Contains("booking/select-flight"));
 
             // Találati lista UI elem ellenőrzése
             var flightElements = driver.FindElements(By.CssSelector("[data-test*='flight-select']"));
