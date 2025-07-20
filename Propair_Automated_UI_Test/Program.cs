@@ -21,18 +21,8 @@ class WizzairTest
             // Cookie popup bezárása (ha van)
             try
             {
-                wait.Until(driver =>
-                {
-                    try
-                    {
-                        var element = driver.FindElement(By.Id("onetrust-accept-btn-handler"));
-                        return (element != null && element.Displayed && element.Enabled) ? element : null;
-                    }
-                    catch (NoSuchElementException)
-                    {
-                        return null;
-                    }
-                })?.Click();
+                var cookieAcceptButton = WaitAndGetElement(wait, driver, By.Id("onetrust-accept-btn-handler"));
+                cookieAcceptButton?.Click();
             }
             catch (WebDriverTimeoutException)
             {
@@ -60,7 +50,7 @@ class WizzairTest
             });
             departureResult.Click();
 
-            // Érkezési város (London)
+            // Érkezési város - Varsó Chopin
             var arrivalInput = WaitAndGetElement(wait, driver, By.CssSelector("input[data-test='search-arrival-station']"));
             
             arrivalInput.Click();
