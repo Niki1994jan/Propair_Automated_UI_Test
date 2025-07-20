@@ -40,18 +40,8 @@ class WizzairTest
             }
 
             // Indulási város (Budapest)
-            var departureInput = wait.Until(driver =>
-            {
-                try
-                {
-                    var element = driver.FindElement(By.CssSelector("input[data-test='search-departure-station']"));
-                    return (element != null && element.Displayed && element.Enabled) ? element : null;
-                }
-                catch (NoSuchElementException)
-                {
-                    return null;
-                }
-            });
+            var departureInput = WaitAndGetElement(wait, driver, By.CssSelector("input[data-test='search-departure-station']"));
+
             departureInput.Click();
             departureInput.SendKeys("Budapest");
 
@@ -71,18 +61,8 @@ class WizzairTest
             departureResult.Click();
 
             // Érkezési város (London)
-            var arrivalInput = wait.Until(driver =>
-            {
-                try
-                {
-                    var el = driver.FindElement(By.CssSelector("input[data-test='search-arrival-station']"));
-                    return (el != null && el.Displayed && el.Enabled) ? el : null;
-                }
-                catch (NoSuchElementException)
-                {
-                    return null;
-                }
-            });
+            var arrivalInput = WaitAndGetElement(wait, driver, By.CssSelector("input[data-test='search-arrival-station']"));
+            
             arrivalInput.Click();
             arrivalInput.SendKeys("WAW"); //Varsó Chopin reptér
 
@@ -102,32 +82,10 @@ class WizzairTest
             arrivalResult.Click();
 
             //Indulasi datum megadása - Selector: #wa-input-9; XPath: //*[@id="wa-input-9"]; JSPath: document.querySelector("#wa-input-9")
-            var departureDate_Input = wait.Until(driver =>
-            {
-                try
-                {
-                    var element = driver.FindElement(By.CssSelector("input[placeholder='Indulás']")); //Exception, hogyha az aria-describedby-ra kerestem, mert változik...
-                    return (element != null && element.Displayed && element.Enabled) ? element : null;
-                }
-                catch (NoSuchElementException)
-                {
-                    return null;
-                }
-            });
+            var departureDate_Input = WaitAndGetElement(wait, driver, By.CssSelector("input[placeholder='Indulás']")); //Exception, hogyha az aria-describedby-ra kerestem, mert változik...
             departureDate_Input.Click();
 
-            var departureDate_Calendar = wait.Until(driver =>
-            {
-                try
-                {
-                    var element = driver.FindElement(By.CssSelector("span[aria-label='2025. július 24., csütörtök']"));
-                    return (element != null && element.Displayed) ? element : null;
-                }
-                catch (NoSuchElementException)
-                {
-                    return null;
-                }
-            });
+            var departureDate_Calendar = WaitAndGetElement(wait, driver, By.CssSelector("span[aria-label='2025. július 24., csütörtök']"));
             departureDate_Calendar.Click();
 
             //teszt - ellenőrzés?
@@ -135,78 +93,22 @@ class WizzairTest
 
             //Érkezési dátum megadása - happy path tesztelés:későbbi dátum megadása
 
-            departureDate_Calendar = wait.Until(driver =>
-            {
-                try
-                {
-                    var element = driver.FindElement(By.CssSelector("span[aria-label='2025. július 27., vasárnap']"));
-                    return (element != null && element.Displayed) ? element : null;
-                }
-                catch (NoSuchElementException)
-                {
-                    return null;
-                }
-            });
+            departureDate_Calendar = WaitAndGetElement(wait, driver, By.CssSelector("span[aria-label='2025. július 27., vasárnap']"));
             departureDate_Calendar.Click();
 
-            ////Utasok számának módosítása
-            //var number_passanger = wait.Until(driver =>
-            //{
-            //    try
-            //    {
-            //        var el = driver.FindElement(By.CssSelector("input[data-test='flight-search-search-passenger']"));
-            //        return (el != null && el.Displayed && el.Enabled) ? el : null;
-            //    }
-            //    catch (NoSuchElementException)
-            //    {
-            //        return null;
-            //    }
-            //});
+            //Utasok számának módosítása - rögtön megnyílik a városok kiválasztása után
 
             //hozzáadunk egy felnőttet
-            var number_adult_button = wait.Until(driver =>
-            {
-                try
-                {
-                    var el = driver.FindElement(By.XPath("//div[@data-test='adult-stepper']//button[@data-test='stepper-button-increase']"));
-                    return (el != null && el.Displayed && el.Enabled) ? el : null;
-                }
-                catch (NoSuchElementException)
-                {
-                    return null;
-                }
-            });
+            var number_adult_button = WaitAndGetElement(wait, driver, By.XPath("//div[@data-test='adult-stepper']//button[@data-test='stepper-button-increase']"));
             number_adult_button.Click();
 
             //Hozzáadunk egy gyereket
-            var number_child_button = wait.Until(driver =>
-            {
-                try
-                {
-                    var el = driver.FindElement(By.XPath("//div[@data-test='stepper-ds']//button[@data-test='stepper-button-increase']"));
-                    return (el != null && el.Displayed && el.Enabled) ? el : null;
-                }
-                catch (NoSuchElementException)
-                {
-                    return null;
-                }
-            });
+            var number_child_button = WaitAndGetElement(wait, driver, By.XPath("//div[@data-test='stepper-ds']//button[@data-test='stepper-button-increase']"));
             number_child_button.Click();
 
 
             // Keresés indítása
-            var searchButton = wait.Until(driver =>
-            {
-                try
-                {
-                    var el = driver.FindElement(By.CssSelector("button[data-test='flight-search-submit']"));
-                    return (el != null && el.Displayed && el.Enabled) ? el : null;
-                }
-                catch (NoSuchElementException)
-                {
-                    return null;
-                }
-            });
+            var searchButton = WaitAndGetElement(wait, driver, By.CssSelector("button[data-test='flight-search-submit']"));
             searchButton.Click();
 
             // Eredményoldal betöltése (URL változás)
@@ -236,5 +138,21 @@ class WizzairTest
             Thread.Sleep(5000); // Csak hogy lássuk, mi történt
             driver.Quit();
         }
+    }
+
+    public static IWebElement WaitAndGetElement(WebDriverWait wait, IWebDriver driver, By selector)
+    {
+        return wait.Until(drv =>
+        {
+            try
+            {
+                var el = drv.FindElement(selector);
+                return (el != null && el.Displayed && el.Enabled) ? el : null;
+            }
+            catch (NoSuchElementException)
+            {
+                return null;
+            }
+        });
     }
 }
