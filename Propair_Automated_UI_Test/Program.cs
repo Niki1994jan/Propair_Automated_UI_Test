@@ -183,7 +183,7 @@ class WizzairTest
             {
                 try
                 {
-                    var el = driver.FindElement(By.XPath("//div[@data-test='stepper-ds']//button[@data-test='stepper-button-increase']")); //ez nem működik..
+                    var el = driver.FindElement(By.XPath("//div[@data-test='stepper-ds']//button[@data-test='stepper-button-increase']"));
                     return (el != null && el.Displayed && el.Enabled) ? el : null;
                 }
                 catch (NoSuchElementException)
