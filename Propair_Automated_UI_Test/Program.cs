@@ -36,19 +36,12 @@ class WizzairTest
             departureInput.SendKeys("Budapest");
 
             //teszt - Budapest megjelenik-e?
-            var departureResult = wait.Until(driver =>
-            {
-                try
-                {
-                    var el = driver.FindElement(By.XPath("//mark[contains(text(),'Budapest')]"));
-                    return (el != null && el.Displayed && el.Enabled) ? el : null;
-                }
-                catch (NoSuchElementException)
-                {
-                    return null;
-                }
-            });
-            departureResult.Click();
+            //kellene az ellenőrzéshez egy listát létrehozni, amibe belementjük a UI-on megjelenő adatokat
+                var content_of_realTextboxes_check = new List<string>(7); //dinamikus lista is lehetne, hogy az utasok szamat annak megfelelően lehessen eltárolni.. habár egyszerűbb a 0,0-kat is elmenteni.
+    
+                //le kellene kerni, hogy valojaban mit tartalmaz az indulasi varos mezo - bar lehet, hogy inkabb a Search gomb megnyomasa elott kellene mindegyik mezo tartalmat checkolni
+                var departureCityTextbox_content;
+                content_of_realTextboxes_check.Add(departureCityTextbox_content);
 
             // Érkezési város - Varsó Chopin
             var arrivalInput = WaitAndGetElement(wait, driver, By.CssSelector("input[data-test='search-arrival-station']"));
@@ -56,35 +49,31 @@ class WizzairTest
             arrivalInput.Click();
             arrivalInput.SendKeys("WAW"); //Varsó Chopin reptér
 
-            //teszt = érk.város megjelenik-e?
-            var arrivalResult = wait.Until(driver =>
-            {
-                try
-                {
-                    var el = driver.FindElement(By.XPath("//mark[contains(text(),'WAW')]"));
-                    return (el != null && el.Displayed && el.Enabled) ? el : null;
-                }
-                catch (NoSuchElementException)
-                {
-                    return null;
-                }
-            });
-            arrivalResult.Click();
+                //teszt = érk.város megjelenik-e?
+                var arrivalCityTextbox_content;
+                content_of_realTextboxes_check.Add(arrivalCityTextbox_content);
 
+            
             //Indulasi datum megadása - Selector: #wa-input-9; XPath: //*[@id="wa-input-9"]; JSPath: document.querySelector("#wa-input-9")
             var departureDate_Input = WaitAndGetElement(wait, driver, By.CssSelector("input[placeholder='Indulás']")); //Exception, hogyha az aria-describedby-ra kerestem, mert változik...
             departureDate_Input.Click();
 
             var departureDate_Calendar = WaitAndGetElement(wait, driver, By.CssSelector("span[aria-label='2025. július 24., csütörtök']"));
             departureDate_Calendar.Click();
-
-            //teszt - ellenőrzés?
-
-
+                
             //Érkezési dátum megadása - happy path tesztelés:későbbi dátum megadása
-
-            departureDate_Calendar = WaitAndGetElement(wait, driver, By.CssSelector("span[aria-label='2025. július 27., vasárnap']"));
+            ////if - else -be megírni: ha van visszaút, vagy ha nincs retúr repjegy
+            departureDate_Calendar = WaitAndGetElement(wait, driver, By.CssSelector("span[aria-label='2025. július 27., vasárnap']")); //azért kapta ugyanazt az elnevezést, mert nem kell új változót létrehozni
             departureDate_Calendar.Click();
+
+
+                //teszt dátumok helyes mentése - ellenőrzés a listaba mentve
+                content_of_realTextboxes_check.Add(arrivalCityTextbox_content);
+                var arrivalDateCalendar_content;
+                content_of_realTextboxes_check.Add(arrivalCityTextbox_content);
+                var departureDateCalendar_content;
+                content_of_realTextboxes_check.Add(arrivalCityTextbox_content);
+            
 
             //Utasok számának módosítása - rögtön megnyílik a városok kiválasztása után
 
@@ -97,12 +86,21 @@ class WizzairTest
             number_child_button.Click();
 
 
+                //ellenorzes - lekerni az utasok számát + hozzáadni a listához (ez több elem!!)
+                /*
+                foreach (){
+                    content_of_realTextboxes_check.Add(arrivalCityTextbox_content);
+                }
+                */
+            
             // Keresés indítása
             var searchButton = WaitAndGetElement(wait, driver, By.CssSelector("button[data-test='flight-search-submit']"));
             searchButton.Click();
 
             // Eredményoldal betöltése (URL változás)
             wait.Until(driver => driver.Url.Contains("booking/select-flight")); //elkezdett Critical error-t dobni...
+
+                //itt is kellene valamilyen ellenőrzés, hogy biztosan jó eredményoldal töltődött-e be
 
             // Találati lista UI elem ellenőrzése
             var flightElements = driver.FindElements(By.CssSelector("[data-test*='flight-select']"));
